@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import {
 	BrowserRouter as Router,
@@ -66,84 +66,67 @@ function ProtectedPage() {
 	return <h3>Protected</h3>;
 }
 
-class LoginPage extends React.Component {
-	constructor(props){
-		super(props);
-		// let history = useHistory();
-		// let location = useLocation();
-		// let from = location.state || { from: { pathname: "/" } };
-		this.state = {
-			password: ''
-			// isLoggedIn: false
-		}
-		this.handleInput = this.handleInput.bind(this);
-	}
-
-	handleInput(e){
-		this.setState({
-			password : e.target.value
-		})	
+function LoginPage(props){
+	const [password, setPassword] = useState('');
+	let history = useHistory();
+	let location = useLocation();
+		  
+	function handleInput(e){
+		setPassword(e.target.value);
 	}
 	
-    login = () => {		
-		// let history = useHistory();
-		// let location = useLocation();
-
-  		// let { from } = location.state || { from: { pathname: "/" } };			
-		console.log(this.state);
-		if(this.state.password === "123"){
+    function login(){					
+		// console.log(this.state);
+		if(password === "123"){
 			auth.authenticate(()=>{
-				useHistory().replace(useLocation().state);
+				history.replace(location.state);
 			});		
-		}	
+		}else{
+			return <h3>Password is incorrect! Please try again!</h3>
+		}
 	}
 	
-	render(){
-		return (
-			<div>
-				<p>You must log in to view the page at protected</p>
-				<input id="txt-input" placeholder="Enter password"
-				name="password" value={this.state.password} onChange ={this.handleInput}
-				
-				></input>
-				<button onClick={this.login()}>Log in</button>
-			</div>
-		);
-	}
-	
+	return (
+		<div>
+			<p>You must log in to view the page at protected</p>
+			<input id="txt-input" placeholder="Enter password"
+			name="password" value={password} onChange ={handleInput}
+			
+			></input>
+			<button onClick={login}>Log in</button>
+		</div>
+	);
 }
 
-class App extends React.Component{
-	render(){
-		return (
-			<Router>
-				<div className="App">
-					
-					<h3>Menu:</h3>
-					<ul>
-						<li><Link to="/public">Public Page</Link></li>
-						<li><Link to="/protected">Protected Page</Link></li>
-					</ul>
-					<h3>Result:</h3>
-					<Switch>
-						<Route path="/public" >
-							<PublicPage />
-						</Route>
-						<Route path="/login" >
-							<LoginPage />
-						</Route>
-						<PrivateRoute path="/protected">
-							<ProtectedPage />
-						</PrivateRoute>
-						{/* <Route path="*">
-							<h1>404 NOT FOUND</h1>
-						</Route> */}
-					</Switch>
-					<AuthButton />
-				</div>
-			</Router>
-		);	
-	}
+function App(){
+	return (
+		<Router>
+			<div className="App">
+				
+				<h3>Menu:</h3>
+				<ul>
+					<li><Link to="/public">Public Page</Link></li>
+					<li><Link to="/protected">Protected Page</Link></li>
+				</ul>
+				<h3>Result:</h3>
+				<Switch>
+					<Route path="/public" >
+						<PublicPage />
+					</Route>
+					<Route path="/login" >
+						<LoginPage />
+					</Route>
+					<PrivateRoute path="/protected">
+						<ProtectedPage />
+					</PrivateRoute>
+					{/* <Route path="*">
+						<h1>404 NOT FOUND</h1>
+					</Route> */}
+				</Switch>
+				<AuthButton />
+			</div>
+		</Router>
+	);	
 }
 
 export default App;
